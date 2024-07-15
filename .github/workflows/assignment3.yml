@@ -98,6 +98,7 @@ jobs:
         run: exit 1
 
       - name: Handling successful build
+        if: success()
         run: echo "Container up and running" >> log.txt
 
       - name: Set up Python
