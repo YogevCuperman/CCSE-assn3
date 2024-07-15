@@ -61,7 +61,7 @@ jobs:
           path: log.txt
 
   test:
-  needs: build
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
