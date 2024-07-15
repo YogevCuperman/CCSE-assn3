@@ -66,8 +66,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Downloading all artifacts
+      - name: Downloading log artifact
         uses: actions/download-artifact@v4
+        with:
+          name: workflow-log
+          path: ./
+
+      - name: Downloading Books Service image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: books-service-image
+          path: ./
 
       - name: Load Books Service image
         run: docker load --input books_image.tar
