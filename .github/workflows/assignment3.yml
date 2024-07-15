@@ -9,7 +9,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_COURSE_NAME }}
+          username: ${{ secrets.DOCKER_COURSE_USERNAME }}
           password: ${{ secrets.DOCKER_COURSE_PASSWORD }}
       - name: Set DATE
         run: echo "DATE=$(date -I)" >> $GITHUB_ENV
