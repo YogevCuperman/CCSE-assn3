@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -21,3 +21,12 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2
           docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2:${{ env.DATE }}
+      - name: Creating log file
+        run: |
+          echo "$(date -Iminutes)" > log.txt
+          echo "Yogev Cuperman" >> log.txt
+      - name: Upload log
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-log
+          path: log.txt
