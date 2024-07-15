@@ -13,3 +13,11 @@ jobs:
           password: ${{ secrets.DOCKER_COURSE_PASSWORD }}
       - name: Set DATE
         run: echo "DATE=$(date -I)" >> $GITHUB_ENV
+      - name: Build the Docker image
+        run: |
+          docker build . --file BooksAPI/Dockerfile --tag ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2
+          docker tag ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2 ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2:${{ env.DATE }}
+      - name: Push to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2
+          docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2:${{ env.DATE }}
