@@ -6,27 +6,119 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_COURSE_USERNAME }}
-          password: ${{ secrets.DOCKER_COURSE_PASSWORD }}
-      - name: Set DATE
-        run: echo "DATE=$(date -I)" >> $GITHUB_ENV
-      - name: Build the Docker image
-        run: |
-          docker build . --file ./BooksService/Dockerfile --tag ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2
-          docker tag ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2 ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2:${{ env.DATE }}
-      - name: Push to Docker Hub
-        run: |
-          docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2
-          docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2:${{ env.DATE }}
+
       - name: Creating log file
         run: |
           echo "$(date -Iminutes)" > log.txt
           echo "Yogev Cuperman" >> log.txt
-      - name: Upload log
+
+
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKER_COURSE_USERNAME }}
+      #     password: ${{ secrets.DOCKER_COURSE_PASSWORD }}
+      # - name: Set DATE
+      #   run: echo "DATE=$(date -I)" >> $GITHUB_ENV
+      # - name: Build the Docker image
+      #   run: |
+      #     docker build . --file ./BooksService/Dockerfile --tag ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2
+      #     docker tag ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2 ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2:${{ env.DATE }}
+      # - name: Push to Docker Hub
+      #   run: |
+      #     docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2
+      #     docker push ${{ secrets.DOCKER_COURSE_USERNAME }}/booksvr-v2:${{ env.DATE }}
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and export
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./BooksService/Dockerfile
+          tags: books-service:latest, ${{ secrets.DOCKER_COURSE_USERNAME }}/books-service:latest
+          outputs: type=docker, dest=/tmp/books_image.tar
+
+      - name: Uploading image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: books-service-image
+          path: /tmp/books_image.tar
+
+      - name: Log build success
+        run: echo "image successfully built" >> log.txt
+        if: success()
+
+      - name: Log build failure
+        run: echo "image not able to be built" >> log.txt
+        if: failure()
+
+      - name: Uploading log artifact
         uses: actions/upload-artifact@v4
         with:
           name: workflow-log
           path: log.txt
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Downloading all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Load Books Service image
+        run: docker load --input books_image.tar
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Building with Docker Compose
+        run: docker comose up --build -d
+        continue-on-error: true
+
+      - name: Check build status
+        id: build_status
+        run: echo "BUILD_STATUS=$?" >> $GITHUB_ENV
+
+      - name: Handling failure build
+        if: env.BUILD_STATUS != '0'
+        run: exit 1
+
+      - name: Handling successful build
+        run: echo "Container up and running" >> log.txt
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          pip install requests
+      
+      - name: Run tests
+        run: pytest -v tests/assn3_tests.py > assn3_test_results.txt
+      
+      - name: Log test results
+        run: |
+          if grep -q "failed" assn3_test_results.txt; then
+            echo "tests failed" >> log.txt
+          else
+            echo "tests succeeded" >> log.txt
+          fi
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: assn3_test_results.txt
+
+      - name: Uploading log artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-log
+          path: log.txt
+    
