@@ -157,6 +157,9 @@ jobs:
         run: docker-compose up -d
         continue-on-error: true
 
+      - name: Checking containers are up
+        run: docker ps
+
       - name: Posting book 1
         run: |
           curl --location --request POST http://127.0.0.1:5001/books -H "Content-Type: application/json" -d '{"title": "Adventures of Huckleberry Finn", "ISBN": "9780520343641", "genre": "Fiction"}'
