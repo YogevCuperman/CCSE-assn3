@@ -44,9 +44,20 @@ book8 = {
 
 # -----------------------------------------------------------------\
 
-requests.post(books_url, json=book1)
-requests.post(books_url, json=book2)
-requests.post(books_url, json=book3)
-requests.post(books_url, json=book6)
-requests.post(books_url, json=book7)
-requests.post(books_url, json=book8)
+res1 = requests.post(books_url, json=book1)
+print(res1.json())
+
+res2 = requests.post(books_url, json=book2)
+print(res2.json())
+
+res3 = requests.post(books_url, json=book3)
+print(res3.json())
+
+res6 = requests.post(books_url, json=book6)
+print(res6.json())
+
+res7 = requests.post(books_url, json=book7)
+print(res7.json())
+
+res8 = requests.post(books_url, json=book8)
+print(res8.json())
