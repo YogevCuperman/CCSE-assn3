@@ -57,7 +57,7 @@ jobs:
       - name: Uploading log artifact
         uses: actions/upload-artifact@v4
         with:
-          name: workflow-build-log
+          name: workflow-log
           path: log.txt
 
   test:
@@ -70,7 +70,7 @@ jobs:
       - name: Downloading log artifact
         uses: actions/download-artifact@v4
         with:
-          name: workflow-build-log
+          name: workflow-log
           path: ./
 
       - name: Downloading Books Service image artifact
@@ -130,8 +130,9 @@ jobs:
       - name: Uploading log artifact
         uses: actions/upload-artifact@v4
         with:
-          name: workflow-test-log
+          name: workflow-log
           path: log.txt
+          overwrite: true
     
   query:
     needs: test
@@ -158,4 +159,4 @@ jobs:
 
       - name: Posting book 1
         run: |
-          curl -X POST http://127.0.0.1:5001/books -H "Content-Type: application/json" -d '{"title": "Adventures of Huckleberry Finn", "ISBN": "9780520343641", "genre": "Fiction"}'
+          curl --location --request POST http://127.0.0.1:5001/books -H "Content-Type: application/json" -d '{"title": "Adventures of Huckleberry Finn", "ISBN": "9780520343641", "genre": "Fiction"}'
