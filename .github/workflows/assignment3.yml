@@ -70,7 +70,7 @@ jobs:
       - name: Downloading log artifact
         uses: actions/download-artifact@v4
         with:
-          name: workflow-log
+          name: workflow-build-log
           path: ./
 
       - name: Downloading Books Service image artifact
