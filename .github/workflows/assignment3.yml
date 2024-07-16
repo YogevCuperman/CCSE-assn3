@@ -186,7 +186,7 @@ jobs:
           do
             echo "query: $line" >> response.txt
             url="http://127.0.0.1:5001/books$line"
-            res=$(curl --location --request GET '$url')
+            res=$(curl --location --request GET "$url")
             echo "response: $res" >> response.txt
           done < "query.txt"
       
