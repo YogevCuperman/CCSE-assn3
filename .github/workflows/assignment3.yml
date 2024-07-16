@@ -133,3 +133,28 @@ jobs:
           name: workflow-test-log
           path: log.txt
     
+  query:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Downloading Books Service image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: books-service-image
+          path: ./
+
+      - name: Load Books Service image
+        run: docker load --input books_image.tar
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Building with Docker Compose
+        run: docker-compose up -d
+        continue-on-error: true
+
+      - name: Posting books 1, 2, 3, 6, 7, 8
+        run: python ./post_books_auxiliary.py
