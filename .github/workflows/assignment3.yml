@@ -167,5 +167,6 @@ jobs:
       - name: Checking that the containers are up
         run: docker ps
 
-      - name: Checking that the server is up
-        run: curl --location --request GET 'http://127.0.0.1:5001/'
+      - name: Posting books 1, 2, 3, 6, 7, 8
+        run:  |
+          curl --location --request POST 'http://127.0.0.1:5001/books' -H "Content-Type: application/json" -d '{"title": "Adventures of Huckleberry Finn", "ISBN": "9780520343641", "genre": "Fiction"}'
