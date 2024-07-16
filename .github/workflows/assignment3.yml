@@ -157,4 +157,4 @@ jobs:
         continue-on-error: true
 
       - name: Posting books 1, 2, 3, 6, 7, 8
-        run: python ../post_books_auxiliary.py
+        run: python post_books_auxiliary.py
