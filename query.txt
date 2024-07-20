@@ -1,3 +1,4 @@
 ?publishedDate=2016-06-13
 ?genre=Fiction
 ?invalid-field=failure
+?genre=Biography
