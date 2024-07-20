@@ -182,7 +182,7 @@ jobs:
 
       - name: Reading and executing query.txt queries
         run: |
-          if [ ! -f "query.txt" ]; then
+          if [ ! -e "query.txt" ] || [ ! -f "query.txt" ]; then
             echo "File not found!" >> response.txt
           fi
           while IFS= read -r line
