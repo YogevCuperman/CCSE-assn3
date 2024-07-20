@@ -115,6 +115,7 @@ jobs:
         run: pytest -v tests/assn3_tests.py > assn3_test_results.txt
       
       - name: Log test results
+        if: always()
         run: |
           if grep -q "failed" assn3_test_results.txt; then
             echo "tests failed" >> log.txt
