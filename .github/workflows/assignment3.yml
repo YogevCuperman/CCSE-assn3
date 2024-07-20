@@ -184,6 +184,7 @@ jobs:
         run: |
           if [ ! -e "query.txt" ]; then
             echo "File not found!" >> response.txt
+            exit 0
           fi
           while IFS= read -r line
           do
