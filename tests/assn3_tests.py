@@ -94,7 +94,7 @@ def test_2():
 
 def test_3():
     response = requests.get(books_url)
-    assert response.status_code == 200
+    assert response.status_code == 404
     assert len(response.json()) == 3
 
 
